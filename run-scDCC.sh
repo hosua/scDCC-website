@@ -13,11 +13,12 @@ source activate scDCC-venv \
 			--data_file "$data_file" \
 			--lc $lc_val \
 			--hc $hc_val \
-	&& source deactivate
+			2>&1 \
+	&& source deactivate 
 
 echo "Generated with: 
 lc=$lc_val, hc=$hc_val
-data_file=" > details.txt
+data_file=$data_file" > details.txt
 
 zip output.zip details.txt log.txt latent_p0_1.txt pred_y_latent_p0_1.txt
 

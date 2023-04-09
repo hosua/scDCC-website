@@ -1,10 +1,11 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] == "POST"){
-	/* DEBUGGING */
+	/* Debugging */
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
 	
+	/* Get variables */
 	$data_file = $_FILES["data-file"];
 
 	$gene_name = $_POST["gene-name"];
@@ -24,20 +25,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST"){
 ?>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Run scDCC online">
-    <meta name="author" content="Josh Ortiga, Xiang Lin, Tian Tian">
-    <title>scDCC</title>
-	
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Run scDCC online">
+	<meta name="author" content="Josh Ortiga, Xiang Lin, Tian Tian">
+	<title>scDCC</title>
+
 <style>
 	body { padding-top: 65px; } /* Stop navbar from overlapping content on top */
 </style>
-    
 
-    <!-- Bootstrap core CSS -->
+
+	<!-- Bootstrap core CSS -->
 	<link href="./assets/css/bootstrap.min.css" rel="stylesheet">
-	
+
 	<body class="bg-dark text-light">
 		<header>
 		  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -58,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST"){
 		</header>
 
 		<div class="container">
-			<div class="container-fluid pt-3 bg-dark text-light border">
+			<div id="container-box" class="container-fluid pt-3 bg-dark text-light border">
 <?php
 if ($_SERVER['REQUEST_METHOD'] == "POST"){
 	chdir("../../");
@@ -66,16 +67,16 @@ if ($_SERVER['REQUEST_METHOD'] == "POST"){
 	echo "<h3> Parameters used </h3>
 		<hr>
 		<div class='row'>
-		  <p>Gene name: <strong>$gene_name</strong> </p>
+		<p>Gene name: <strong>$gene_name</strong> </p>
 		</div>
 		<div class='row'>
-		  <p>Number of contraints: <strong>$num_constraints</strong> </p>
+		<p>Number of contraints: <strong>$num_constraints</strong> </p>
 		</div>
 		<div class='row'>
-		  <p>LC value: <strong>$lc_val</strong> </p>
+		<p>LC value: <strong>$lc_val</strong> </p>
 		</div>
 		<div class='row'>
-		  <p>HC value: <strong>$hc_val</strong> </p>
+		<p>HC value: <strong>$hc_val</strong> </p>
 		</div>
 		<hr>	
 ";
@@ -83,9 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST"){
 		echo "<p><strong>Error:</strong> Something went wrong with uploading the file to the server, please try again later.</p>";
 	} else {
 		echo "<div class='row'> 
-			<p> Data is being processed... </p>
-			<p> This may take some time, please be patient. </p>
-		</div>";
+			<p> Your data was processed sucessfully. Download it now using the button below. </p>
+			<p> Note: Your download will disappear once you leave this page! </p>
+			</div>";
+		/* Run scDCC code */
 		$cmd = "./run-scDCC.sh " . "$upload_folder" . $data_file['name'] . " "  . $lc_val . " " . $hc_val;
 		$output = shell_exec($cmd);
 		file_put_contents("log.txt", "$output");
@@ -93,15 +95,29 @@ if ($_SERVER['REQUEST_METHOD'] == "POST"){
 		chdir("$start_dir");
 		/* Download button */
 		echo '<div class="col-auto">
-					<a href="./downloads/output.zip" class="btn btn-primary mb-3" download="output.zip">Download</a>
-				</div>';
+				<a href="./downloads/output.zip" class="btn btn-primary mb-3" download="output.zip">Download</a>
+			  </div>';
 	}
 }
 ?>
 			</div>
 		</div>
+<script>
+	/* Redirect user to error page if download page is refreshed 
+ 	 * https://stackoverflow.com/questions/55411258/redirect-to-different-page-on-browser-refresh-button-click */
+	function checkEvt(){
+		var evTypep=window.performance.getEntriesByType("navigation")[0].type;
+		if (evTypep=='reload'){
+			window.location.replace("error.php");
+		}
+	}
+	checkEvt();
+	// if ( window.history.replaceState ) {
+	// 	window.history.replaceState( null, null, window.location.href );
+	// }
+</script>
 
-		  <!-- FOOTER -->
+	<!-- FOOTER -->
 	<footer class="container-fluid pt-5 text-light bg-dark">
 		<p>&copy; 2022-2023 New Jersey Institute of Technology (NJIT) &middot; <a href="https://github.com/ttgump/scDCC">Github</a>
 	  </footer>

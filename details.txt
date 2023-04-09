@@ -1,3 +1,3 @@
 Generated with: 
-lc=20, hc=90
-data_file=
+lc=429, hc=69
+data_file=scDCC-website/site/uploads/CITE_CBMC_counts_top2000.h5

@@ -1,16 +1,3 @@
-<?php
-	if ($_GET['run']){
-		// chdir("");
-		
-		/* Code to run scDCC */	
-		// $start_dir = getcwd();
-		// chdir("../../");
-		// $output = shell_exec("./run-scDCC.sh");
-		// file_put_contents("log.txt", "$output");
-		// shell_exec("./zip-log.txt");
-		// chdir("$start_dir");
-	}
-?>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -74,7 +61,7 @@
 
 			<br>
 			
-			<form method="post" action="download.php" id="scDCC-form" class="container-fluid pt-3 text-light bg-dark border" enctype="multipart/form-data">
+			<form method="post" action="download.php" onsubmit="return loadingCircle()" id="scDCC-form" class="container-fluid pt-3 text-light bg-dark border" enctype="multipart/form-data">
 					<div class="row">
 						<div class="well well-small">
 							<h3>Please upload data files for scDCC here</h3> 
@@ -111,11 +98,17 @@
 						<div class="col-auto align-self-center">
 							<button id="run-scDCC" type="submit" class="btn btn-primary mb-3" disabled>Run scDCC</button>
 						</div>
-						<div class="col pt-1">
-							<a href="http://google.com">How to upload files for scDCC</a>
+					</div>
+<!--
+					<div class="row pt-2">
+						<div class="col-auto align-self-center">
+							<span> Your files are being processed, please be patient. </span>
+							<div class="spinner-border" role="status">
+								<span class="sr-only"></span>
+							</div>
 						</div>
 					</div>
-
+-->
 			</form>
 		</div> <!-- End outer container -->
 		<script>
@@ -154,6 +147,30 @@
 					scDCC_form.removeChild(scDCC_form.lastElementChild);
 			});
 			console.log(data_file, gene_name);
+
+			/* Display loading circle to the user */
+			function loadingCircle(){
+				console.log("Running loadingCircle()");
+				let row = document.createElement("div");
+				row.classList.add("row", "pt-2");
+				let col = document.createElement("col");
+				col.classList.add("col-auto", "align-self-center");
+				let txt = document.createElement("span");
+				txt.textContent = "Your data is being processed, please be patient.";
+				let spinner = document.createElement("span");
+				spinner.classList.add("spinner-border");
+				spinner.setAttribute("role", "status");
+				let sr = document.createElement("span");
+				sr.classList.add("sr-only");	
+				spinner.appendChild(sr);
+				col.appendChild(txt);
+				col.appendChild(spinner);
+				row.appendChild(col);
+				scDCC_form.appendChild(row);
+				
+				run_btn.disabled = true;
+				return true;
+			}
 		</script>
 
 		  <!-- FOOTER -->
